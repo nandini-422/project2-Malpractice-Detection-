@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="results-container">
+        <h1>Exam Results</h1>
+        
+        <div class="score-display">
+            <h2>Your Score: {{ score }}/{{ total }}</h2>
+        </div>
+        
+        <div class="feedback-section">
+            <h3>Question Feedback:</h3>
+            <div class="feedback-list">
+                {% for item in feedback %}
+                <div class="feedback-item">
+                    {{ item }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <a href="{{ url_for('home') }}" class="home-button">Return to Home</a>
+    </div>
+</body>
+</html>

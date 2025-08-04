@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Exam</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Left Side: Camera Feed -->
+        <div class="camera-feed">
+            <h2>Camera Feed</h2>
+            <img src="{{ url_for('video_feed') }}" alt="Camera Feed">
+        </div>
+
+        <!-- Right Side: Exam Questions -->
+        <div class="exam-questions">
+            <h2>Exam Questions</h2>
+            <form id="exam-form">
+                <div class="question">
+                    <p>1. What is the capital of France?</p>
+                    <input type="text" name="q1" required>
+                </div>
+                <div class="question">
+                    <p>2. What is 2 + 2?</p>
+                    <input type="text" name="q2" required>
+                </div>
+                <div class="question">
+                    <p>3. What is the largest planet in the solar system?</p>
+                    <input type="text" name="q3" required>
+                </div>
+                <div class="question">
+                    <p>4. Who wrote 'Romeo and Juliet'?</p>
+                    <input type="text" name="q4" required>
+                </div>
+                <div class="question">
+                    <p>5. What is the chemical symbol for water?</p>
+                    <input type="text" name="q5" required>
+                </div>
+                <button type="submit">Submit Exam</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check for malpractice every 5 seconds
+        setInterval(() => {
+            fetch('/submit_exam')
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url; // Redirect to 404 page
+                    }
+                });
+        }, 5000);
+    </script>
+</body>
+</html>

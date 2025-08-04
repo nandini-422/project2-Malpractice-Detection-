@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom right, #a0e7e5, #89c2d9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Container Styling */
+        .home-container {
+            display: flex;
+            align-items: center;
+            background: #fff5e6; /* Cream color */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            opacity: 0;
+            transform: translateY(-50px);
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo Styling */
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+            border: 2px solid red; /* Debugging: Add border to check if the image space is reserved */
+        }
+
+        /* Title Styling */
+        .title {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Button Styling */
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            margin: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 5px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        /* Popup Effect */
+        .btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <!-- Use Flask's url_for to reference the image in the static folder -->
+        <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo" class="logo" onerror="console.error('Image failed to load. Check the file path or file name.');">
+        <div>
+            <div class="title">Welcome to Online Exam System</div>
+            <div class="buttons">
+                <a href="{{ url_for('login_register') }}" class="btn">Login / Register</a>
+                <a href="{{ url_for('malpractice') }}" class="btn">Malpractice Detection</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Debugging: Log the image path to the console
+        const logo = document.querySelector('.logo');
+        console.log('Image path:', logo.src);
+    </script>
+</body>
+</html>

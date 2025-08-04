@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malpractice Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ff4b2b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div>
+            <div class="spinner"></div>
+            <p class="loading-text">Processing...</p>
+        </div>
+    </div>
+
+    <div class="malpractice-container">
+        <!-- Left Side: Camera Feed -->
+        <div class="camera-feed">
+            <h2>Camera Feed</h2>
+            <img src="{{ url_for('video_feed') }}" alt="Camera Feed">
+        </div>
+
+        <!-- Exam Questions -->
+        <div class="exam-questions">
+            <h2>Exam Questions</h2>
+            <form id="exam-form">
+                {% for question in questions %}
+                <div class="question">
+                    <p>{{ loop.index }}. {{ question.text }}</p>
+                    <input type="{{ question.type }}" name="{{ question.id }}" required>
+                </div>
+                {% endfor %}
+                <button type="submit" id="submit-btn">Submit Exam</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const examForm = document.getElementById("exam-form");
+            const submitBtn = document.getElementById("submit-btn");
+            const loadingOverlay = document.getElementById("loading-overlay");
+            let isSubmitting = false;
+            let malpracticeCheckInterval;
+
+            // Handle exam submission
+            examForm.addEventListener("submit", async function (e) {
+                e.preventDefault();
+                
+                if (isSubmitting) return;
+                isSubmitting = true;
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Submitting...";
+                loadingOverlay.style.display = "flex";
+
+                try {
+                    const formData = new FormData(examForm);
+                    const response = await fetch('/submit_exam', {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    if (!response.ok) throw new Error('Submission failed');
+                    
+                    const data = await response.json();
+                    
+                    if (data.redirect) {
+                        // Stop malpractice checking
+                        clearInterval(malpracticeCheckInterval);
+                        window.location.href = data.url;
+                    } else {
+                        throw new Error('No redirect URL received');
+                    }
+                } catch (error) {
+                    console.error("Submission error:", error);
+                    alert("Error submitting exam. Please try again.");
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Submit Exam";
+                    loadingOverlay.style.display = "none";
+                    isSubmitting = false;
+                }
+            });
+
+            // Enhanced malpractice check function
+            function checkMalpractice() {
+                fetch('/check_malpractice')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network error');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.redirect) {
+                            clearInterval(malpracticeCheckInterval);
+                            loadingOverlay.style.display = "flex";
+                            setTimeout(() => {
+                                window.location.href = data.url;
+                            }, 1000); // Give time for audio to play
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Malpractice check error:", error);
+                    });
+            }
+
+            // Start checking for malpractice with more frequent checks
+            malpracticeCheckInterval = setInterval(checkMalpractice, 500);
+
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', () => {
+                clearInterval(malpracticeCheckInterval);
+            });
+        });
+    </script>
+</body>
+</html>

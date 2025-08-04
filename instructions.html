@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Instructions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="instructions-container">
+        <h1>Exam Instructions</h1>
+        <div class="instructions-content">
+            <ol>
+                <li>Ensure you are in a quiet environment with proper lighting.</li>
+                <li>Keep your face visible to the camera at all times.</li>
+                <li>Do not move out of the camera frame during the exam.</li>
+                <li>Do not use any external devices or materials.</li>
+                <li>The exam will be automatically submitted if malpractice is detected.</li>
+                <li>You will have limited time to complete the exam.</li>
+                <li>Do not refresh or close the browser during the exam.</li>
+            </ol>
+            
+            <div class="start-exam-btn">
+                <a href="{{ url_for('malpractice') }}" class="btn">Start Exam</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
